@@ -1,7 +1,31 @@
 <template>
 <div class="fila">
-    <input type="text" v-model="taskLocal">
-    <button @click="addToTask">(+)</button>
+    
+    <v-row>
+        <v-col >
+            <v-text-field
+                label="Tarea"
+                filled
+                dense
+                v-model="taskLocal"
+            ></v-text-field>
+        </v-col>
+        <v-col col-2>
+            <v-btn      
+              color="blue-grey"
+              class="ma-2 white--text"
+              @click="addToTask"
+            >
+              <v-icon
+                dark
+                fab
+              >
+                mdi-plus
+              </v-icon>
+            </v-btn>
+        </v-col>
+    </v-row>
+
 </div>
 </template>
 
@@ -21,7 +45,8 @@ export default {
     methods: {
         addToTask(){
             this.$emit('addTask', {
-                title: this.taskLocal
+                title: this.taskLocal,
+                state: 0
             })
             this.taskLocal = ''
         },

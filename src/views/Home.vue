@@ -1,7 +1,49 @@
 <template>
-  <section class="centro">
-      <h2>To do list: <span v-show="estado!=''">{{ estado }}</span></h2>
-      <InputAndButton 
+  <v-container>    
+      <v-card
+        max-width="100%"
+        class="mx-auto"
+      >
+        <v-toolbar
+          color="light-blue"
+          dark
+        >
+          <v-toolbar-title>Tod List</v-toolbar-title>
+
+          <v-spacer></v-spacer>
+
+          <v-btn icon>
+            <v-icon>mdi-magnify</v-icon>
+          </v-btn>
+
+          <v-btn icon>
+            <v-icon>mdi-view-module</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-card-text>
+          <InputAndButton 
+            :task="task"
+            @addTask="agregarTarea"
+          />
+        </v-card-text>
+
+        <v-list
+          subheader
+          two-line
+        >
+
+          <Fila 
+            v-for="task in tasks"
+            :key="task.id"
+            :task="task"
+            @changeState="cambiar"
+          />
+
+        </v-list>
+      </v-card>
+
+      <!-- <InputAndButton 
         @addTask="agregarTarea" 
         :task="task"
       />
@@ -23,26 +65,28 @@
                   </div>
               </div>
           </li>
-      </ul>
-  </section>
+      </ul> -->
+  </v-container>
 </template>
 
 <script>
 
 import { mapActions, mapGetters } from 'vuex'
 import InputAndButton from '../components/InputAndButton.vue'
+import Fila from '../components/Fila.vue'
 
 
 export default {
   name: 'Home',
   components: {
-      InputAndButton
+      InputAndButton,
+      Fila
   },
 
   data() {
     return {
         estado: '',
-        task: ''
+        task: '',
     }
   },
   
@@ -68,15 +112,8 @@ export default {
       },
       cambiar(task) {
           this.estado = 'cargando...'
-          let estado = 0
-          if (task.state == 0) {
-              estado = 1
-          }
-
-          this.updateTask({
-            id: task.id,
-            state: estado
-          }).then(resp=>{
+          
+          this.updateTask(task).then(resp=>{
               this.estado = 'hecho'
           })
 

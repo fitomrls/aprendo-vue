@@ -24,7 +24,7 @@ export default new Vuex.Store({
 
       state.tasks.map(task => {
         if (task.id == payload.id) {
-          task.state = payload.estado
+          task.state = payload.state
         }
       })
 
