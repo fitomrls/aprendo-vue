@@ -1,157 +1,111 @@
 <template>
-  <v-container>    
-      <v-card
-        max-width="100%"
-        class="mx-auto"
-      >
-        <v-toolbar
-          color="light-blue"
-          dark
-        >
-          <v-toolbar-title>Tod List</v-toolbar-title>
+  <v-container>
+    <v-row>
+      <v-col col="6" md="6" sm="12">
+        <v-list subheader two-line>
+          <v-subheader inset>Productos</v-subheader>
 
-          <v-spacer></v-spacer>
+          <v-list-item v-for="product in products" :key="product.id">
+            <v-list-item-avatar>
+              <v-icon class="grey lighten-1" dark> mdi-folder </v-icon>
+            </v-list-item-avatar>
 
-          <v-btn icon>
-            <v-icon>mdi-magnify</v-icon>
-          </v-btn>
+            <v-list-item-content>
+              <v-list-item-title v-text="product.name"></v-list-item-title>
 
-          <v-btn icon>
-            <v-icon>mdi-view-module</v-icon>
-          </v-btn>
-        </v-toolbar>
+              <v-list-item-subtitle
+                v-text="product.sell_price"
+              ></v-list-item-subtitle>
+            </v-list-item-content>
 
-        <v-card-text>
-          <InputAndButton 
-            :task="task"
-            @addTask="agregarTarea"
-          />
-        </v-card-text>
+            <v-list-item-action>
+              <v-btn icon @click="add(product)">
+                <v-icon color="grey lighten-1">mdi-plus</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
 
-        <v-list
-          subheader
-          two-line
-        >
-
-          <Fila 
-            v-for="task in tasks"
-            :key="task.id"
-            :task="task"
-            @changeState="cambiar"
-          />
-
+          <v-divider inset></v-divider>
         </v-list>
-      </v-card>
+      </v-col>
 
-      <!-- <InputAndButton 
-        @addTask="agregarTarea" 
-        :task="task"
-      />
-      <ul>
-          <li v-for="tarea, index in tasks" :key="tarea.id">
-              <div class="row">
-                  <div>{{ tarea.title }}</div>
-                  <div>
-                      <input 
-                        v-if="tarea.state == 0" 
-                        type="checkbox" 
-                        @click="cambiar(tarea)">
-                      <input 
-                        v-else 
-                        type="checkbox" 
-                        checked 
-                        @click="cambiar(tarea)">
-                      <button @click="borrar(tarea.id)">-</button>
-                  </div>
-              </div>
-          </li>
-      </ul> -->
+      <v-col col="6" md="6" sm="12">
+        <v-list subheader two-line dark>
+          <v-subheader inset>Carrito</v-subheader>
+
+          <v-list-item v-for="product in carts" :key="product.id">
+              <v-list-item-icon>
+                {{product.cuantos}}
+              </v-list-item-icon> 
+
+            <v-list-item-avatar>
+              <v-icon class="grey lighten-1" dark> mdi-folder </v-icon>
+            </v-list-item-avatar>
+
+            <v-list-item-content>
+              <v-list-item-title v-text="product.name"></v-list-item-title>
+
+              <v-list-item-subtitle
+                v-text="product.sell_price"
+              ></v-list-item-subtitle>
+            </v-list-item-content>
+
+            <v-list-item-action>
+              <v-btn icon>
+                <v-icon color="grey lighten-1">mdi-pencil</v-icon>
+              </v-btn>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-
-import { mapActions, mapGetters } from 'vuex'
-import InputAndButton from '../components/InputAndButton.vue'
-import Fila from '../components/Fila.vue'
-
-
+import { mapActions, mapGetters } from "vuex";
 export default {
-  name: 'Home',
-  components: {
-      InputAndButton,
-      Fila
-  },
-
+  name: "Home",
   data() {
     return {
-        estado: '',
-        task: '',
-    }
+      carts: [],
+    };
   },
-  
+
   methods: {
-      ...mapActions([
-            'retrieveTasks',
-            'createTask',
-            'updateTask'
-        ]),
-      async agregarTarea(fdata) {
-        this.estado = 'creando...'
-        await this.createTask(fdata)
-        this.estado = 'terminado'
-        //this.$root.$emit('resetFormTask')
-        this.task = ''
-      },
-      borrar(id) {
-          /* axios.delete('http://localhost/api-blog/public/api/tasks/' + id)
-              .then(resp => {
-                  const index = this.tasks.findIndex(elem => elem.id == id)
-                  this.tasks.splice(index, 1)
-              }) */
-      },
-      cambiar(task) {
-          this.estado = 'cargando...'
-          
-          this.updateTask(task).then(resp=>{
-              this.estado = 'hecho'
-          })
-
-      },
-
-      fetchTareas(){
-        this.retrieveTasks()
+    ...mapActions(["retrieveProducts"]),
+    add(product) {
+      let newproduct={
+        id:product.id,
+        name:product.name,
+        sell_price:product.sell_price,
+        cuantos:1,
       }
+      /* let pro= this.carts.find(element=>{
+        if(element.id==product.id){
+          return element
+        }
+      }) */
+      let pro= this.carts.find(element=>element.id==product.id)
+           
+      
+      if(pro==undefined){
+        this.carts.push(newproduct);
+      }
+      else{
+        pro.cuantos=pro.cuantos+1
+      }
+      
+    },
   },
   computed: {
-    ...mapGetters(['tasks'])
+    ...mapGetters(["products"]),
   },
 
-  /* watch: {
-    tasks(newValue, oldValue) {
-        this.estado = ''
-        this.$root.$emit('resetFormTask')
-    }
-  }, */
-
-   async created() {
-    this.estado = 'cargando...'
-    await this.retrieveTasks()
-    this.estado = 'done'
+  created() {
+    this.retrieveProducts();
   },
-}
+};
 </script>
 
-<style>
-    ul{
-        list-style: none;
-    }
-    .row{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    h2 span{
-        font-size: 12px;
-    }
-</style>
+<style lang="scss" scoped></style>

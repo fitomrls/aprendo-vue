@@ -4,19 +4,27 @@ import axios from 'axios'
 
 Vue.use(Vuex)
 
-axios.defaults.baseURL = "http://localhost/api-blog/public/api"
+axios.defaults.baseURL = " http://127.0.0.1:8000/api"
 
 export default new Vuex.Store({
   state: {
-    tasks: null
+    tasks: null, 
+    products: true
   },
+
   getters: {
-    tasks: state => state.tasks
+    tasks: state => state.tasks,
+    products: state => state.products
   },
+  
   mutations: {
     SET_TASKS(state, payload) {
       state.tasks = payload
     },
+    SET_PRODUCTS(state, payload) {
+      state.products = payload
+    },
+
     ADD_TASK(state, payload) {
       state.tasks.push(payload)
     },
@@ -37,6 +45,14 @@ export default new Vuex.Store({
       await axios.get('tasks').
       then(response => {
         context.commit('SET_TASKS', response.data)
+      })
+
+    },
+
+    async retrieveProducts(context) {
+      await axios.get('products').
+      then(response => {
+        context.commit('SET_PRODUCTS', response.data.data)
       })
 
     },
